@@ -10,11 +10,13 @@ const btnPlay = $('.btn-toggle-play')
 const player = $('.player')
 const progress = $('#progress')
 const nextBtn = $('.btn-next')
-const prevBtn =$('.btn-prev')
+const prevBtn = $('.btn-prev')
+const btnRandom = $('.btn-random')
 
 const app = {
     isPlaying: false,
     currentIndex: 0,
+    isPlayingRandom: false,
     songs: [
         {
             name: "Tu Phir Se Aana",
@@ -106,7 +108,9 @@ const app = {
             duration: 10000,
             iterations: Infinity
         })
+
         cdThumbRotate.pause()
+
         document.onscroll = function () {
             const scrollTop = window.scrollY || document.documentElement.scrollTop
             const newWidth = cdWidth - scrollTop
@@ -118,11 +122,13 @@ const app = {
         btnPlay.onclick = function () {
             self.isPlaying ? audioSong.pause() : audioSong.play()
         }
+
         audioSong.onplay = function () {
             self.isPlaying = true
             player.classList.add('playing')
             cdThumbRotate.play()
         }
+
         audioSong.onpause = function () {
             self.isPlaying = false
             player.classList.remove('playing')
@@ -135,39 +141,63 @@ const app = {
                 progress.value = progressPercen
             }
         }
+
         progress.onchange = function (e) {
             const seekTime = audioSong.duration / 100 * e.target.value
             audioSong.currentTime = seekTime
         }
+
         nextBtn.onclick = function () {
-            self.nextSong()
+            self.isPlayingRandom ? self.randomSongs() : self.nextSong()
             audioSong.play()
         }
-        prevBtn.onclick =function(){
-            self.prevSong()
+
+        prevBtn.onclick = function () {
+            self.isPlayingRandom ? self.randomSongs() : self.nextSong()
             audioSong.play()
+        }
+
+        btnRandom.onclick = function () {
+            this.classList.toggle('active')
+            self.isPlayingRandom = !self.isPlayingRandom
         }
     },
+
+    randomSongs: function () {
+        let randomIndex
+        // const indexs = this.songs.map((value, index) => index)
+        do {
+            randomIndex = Math.floor(Math.random() * this.songs.length)
+            // indexs = indexs.filter(index => index != randomIndex)
+        }
+        while (randomIndex == this.currentIndex)
+        this.currentIndex = randomIndex
+        this.loadCurrentSong()
+    },
+
     nextSong: function () {
         this.currentIndex++
         if (this.currentIndex == this.songs.length) {
             this.currentIndex = 0
         }
         this.loadCurrentSong()
-        
+
     },
-    prevSong: function(){
+
+    prevSong: function () {
         this.currentIndex--
         if (this.currentIndex <= 0) {
-            this.currentIndex = this.songs.length -1
+            this.currentIndex = this.songs.length - 1
         }
         this.loadCurrentSong()
     },
+
     loadCurrentSong: function () {
         songName.textContent = this.currentSong.name
         imgSong.style.backgroundImage = `url('${this.currentSong.image}')`
         audioSong.src = this.currentSong.path
     },
+
     start: function () {
         this.defineProperties()
         this.render()
