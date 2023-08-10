@@ -44,7 +44,7 @@ const app = {
             path:
                 "https://mp3.filmisongs.com/go.php?id=Damn%20Song%20Raftaar%20Ft%20KrSNa.mp3",
             image:
-            "https://media.istockphoto.com/id/682516816/vi/vec-to/t%E1%BA%A3i-cu%E1%BB%91i-tu%E1%BA%A7n-minh-h%E1%BB%8Da-vector-n%E1%BB%81n-m%C3%A0u-v%C3%A0ng.jpg?s=2048x2048&w=is&k=20&c=_ylwoLvSOx27qd1wjoxtETI7wwFQC1643nfeuOkS8xE="
+                "https://media.istockphoto.com/id/682516816/vi/vec-to/t%E1%BA%A3i-cu%E1%BB%91i-tu%E1%BA%A7n-minh-h%E1%BB%8Da-vector-n%E1%BB%81n-m%C3%A0u-v%C3%A0ng.jpg?s=2048x2048&w=is&k=20&c=_ylwoLvSOx27qd1wjoxtETI7wwFQC1643nfeuOkS8xE="
         },
         {
             name: "Feeling You",
@@ -76,10 +76,22 @@ const app = {
     
         `
         })
-        playList.innerHTML=htmls.join('')
+        playList.innerHTML = htmls.join('')
+    },
+    handleEvenScroll: function () {
+        const cd = $('.cd')
+        const cdWidth = cd.offsetWidth
+        document.onscroll = function () {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop
+            const newWidth = cdWidth - scrollTop
+
+            cd.style.width = newWidth > 0 ? newWidth + 'px' : 0
+            cd.style.opacity = newWidth > 54 ? newWidth / cdWidth : 0
+        }
     },
     start: function () {
         this.render()
+        this.handleEvenScroll()
     }
 }
 app.start();
