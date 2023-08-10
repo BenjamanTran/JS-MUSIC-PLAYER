@@ -12,16 +12,19 @@ const progress = $('#progress')
 const nextBtn = $('.btn-next')
 const prevBtn = $('.btn-prev')
 const btnRandom = $('.btn-random')
+const btnRepeat = $('.btn-repeat')
 
 const app = {
     isPlaying: false,
     currentIndex: 0,
     isPlayingRandom: false,
+    isRepeated: false,
+
     songs: [
         {
             name: "Tu Phir Se Aana",
             singer: "Raftaar x Salim Merchant x Karma",
-            path: "https://mp3.filmisongs.com/go.php?id=Damn%20Song%20Raftaar%20Ft%20KrSNa.mp3",
+            path: "./music/CallGirl-TrungTu-7344918.mp3",
             image:
                 "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
         },
@@ -160,6 +163,15 @@ const app = {
         btnRandom.onclick = function () {
             this.classList.toggle('active')
             self.isPlayingRandom = !self.isPlayingRandom
+        }
+
+        audioSong.onended = function () {
+            self.isRepeated ? audioSong.play() : nextBtn.click()
+        }
+
+        btnRepeat.onclick = function () {
+            self.isRepeated = !self.isRepeated
+            this.classList.toggle('active')
         }
     },
 
