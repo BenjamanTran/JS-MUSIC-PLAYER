@@ -8,6 +8,8 @@ const imgSong = $('.cd-thumb')
 const audioSong = $('#audio')
 const btnPlay = $('.btn-toggle-play')
 const player = $('.player')
+const progress = $('#progress')
+
 const app = {
     isPlaying: false,
     currentIndex: 0,
@@ -115,6 +117,17 @@ const app = {
         audioSong.onpause = function () {
             self.isPlaying = false
             player.classList.remove('playing')
+        }
+
+        audioSong.ontimeupdate = function () {
+            if (audioSong.duration) {
+                const progressPercen = Math.floor(audioSong.currentTime / audioSong.duration * 100)
+                progress.value = progressPercen
+            }
+        }
+        progress.onchange = function (e) {
+            const seekTime = audioSong.duration / 100 * e.target.value
+            audioSong.currentTime = seekTime
         }
     },
     loadCurrentSong: function () {
