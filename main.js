@@ -9,6 +9,8 @@ const audioSong = $('#audio')
 const btnPlay = $('.btn-toggle-play')
 const player = $('.player')
 const progress = $('#progress')
+const nextBtn = $('.btn-next')
+const prevBtn =$('.btn-prev')
 
 const app = {
     isPlaying: false,
@@ -95,10 +97,16 @@ const app = {
         })
         playList.innerHTML = htmls.join('')
     },
-    handleEvenScroll: function () {
+    handleEvent: function () {
         const cdWidth = cd.offsetWidth
         const self = this
-
+        const cdThumbRotate = imgSong.animate([
+            { transform: 'rotate(360deg)' }
+        ], {
+            duration: 10000,
+            iterations: Infinity
+        })
+        cdThumbRotate.pause()
         document.onscroll = function () {
             const scrollTop = window.scrollY || document.documentElement.scrollTop
             const newWidth = cdWidth - scrollTop
@@ -113,10 +121,12 @@ const app = {
         audioSong.onplay = function () {
             self.isPlaying = true
             player.classList.add('playing')
+            cdThumbRotate.play()
         }
         audioSong.onpause = function () {
             self.isPlaying = false
             player.classList.remove('playing')
+            cdThumbRotate.pause()
         }
 
         audioSong.ontimeupdate = function () {
@@ -129,6 +139,29 @@ const app = {
             const seekTime = audioSong.duration / 100 * e.target.value
             audioSong.currentTime = seekTime
         }
+        nextBtn.onclick = function () {
+            self.nextSong()
+            audioSong.play()
+        }
+        prevBtn.onclick =function(){
+            self.prevSong()
+            audioSong.play()
+        }
+    },
+    nextSong: function () {
+        this.currentIndex++
+        if (this.currentIndex == this.songs.length) {
+            this.currentIndex = 0
+        }
+        this.loadCurrentSong()
+        
+    },
+    prevSong: function(){
+        this.currentIndex--
+        if (this.currentIndex <= 0) {
+            this.currentIndex = this.songs.length -1
+        }
+        this.loadCurrentSong()
     },
     loadCurrentSong: function () {
         songName.textContent = this.currentSong.name
@@ -138,7 +171,7 @@ const app = {
     start: function () {
         this.defineProperties()
         this.render()
-        this.handleEvenScroll()
+        this.handleEvent()
         this.loadCurrentSong()
     }
 }
