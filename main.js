@@ -79,10 +79,10 @@ const app = {
         })
     },
     render: function () {
-        const htmls = this.songs.map(song => {
+        const htmls = this.songs.map((song, index) => {
             return `
         
-        <div class="song">
+        <div class="song ${this.currentIndex == index ? 'active' : ''}" data-index=${index}>
           <div
             class="thumb"
             style="
@@ -156,7 +156,7 @@ const app = {
         }
 
         prevBtn.onclick = function () {
-            self.isPlayingRandom ? self.randomSongs() : self.nextSong()
+            self.isPlayingRandom ? self.randomSongs() : self.prevSong()
             audioSong.play()
         }
 
@@ -172,6 +172,17 @@ const app = {
         btnRepeat.onclick = function () {
             self.isRepeated = !self.isRepeated
             this.classList.toggle('active')
+        }
+
+        playList.onclick= function(e){
+            const nodeSong= e.target.closest('.song:not(.active)')
+
+            if(nodeSong || e.target.closest('.options')){
+                self.currentIndex=Number(nodeSong.dataset.index)
+                self.loadCurrentSong()
+                self.render()
+                audioSong.play()
+            }
         }
     },
 
@@ -193,7 +204,7 @@ const app = {
             this.currentIndex = 0
         }
         this.loadCurrentSong()
-
+        this.scrollToActiveSong()
     },
 
     prevSong: function () {
@@ -202,12 +213,24 @@ const app = {
             this.currentIndex = this.songs.length - 1
         }
         this.loadCurrentSong()
+        this.scrollToActiveSong()
     },
 
     loadCurrentSong: function () {
         songName.textContent = this.currentSong.name
         imgSong.style.backgroundImage = `url('${this.currentSong.image}')`
         audioSong.src = this.currentSong.path
+        this.render()
+    },
+
+    scrollToActiveSong: function(){
+        setTimeout(()=>{
+            const action = this.currentIndex > 2 ? 'nearest' : 'center'
+            $('.song.active').scrollIntoView({
+                behavior:'smooth',
+                block: action,
+            })
+        }, 300)
     },
 
     start: function () {
